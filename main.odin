@@ -22,14 +22,18 @@ main :: proc() {
 		return
 	}
 
-	renderer := SDL.CreateRenderer(windowManager.m_window,
-		-1,
-		SDL.RENDERER_ACCELERATED)
+	renderingManager := onyx.CreateRenderingManager(
+		windowManager.m_window)
+
+	renderer := renderingManager.m_renderer
 	
 	if renderer == nil {
 		fmt.eprintln("Failed to create a renderer")
 		return
 	}
+
+	image := onyx.LoadTexture(renderer, "Assets/player.png")
+	texr := SDL.Rect{10, 10, image.w, image.h}
 	
 	lastUpdateTime: u32 = 0
 
@@ -50,6 +54,8 @@ main :: proc() {
 		if lastUpdateTime + 30 < SDL.GetTicks() {
 			lastUpdateTime = SDL.GetTicks()
 			SDL.RenderClear(renderer)
+
+			SDL.RenderCopy(renderer, image.texture, nil, &texr)
 
 			SDL.RenderPresent(renderer)
 		}
